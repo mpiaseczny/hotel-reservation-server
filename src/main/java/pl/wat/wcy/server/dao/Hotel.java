@@ -10,15 +10,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Users")
-public class User {
+@Table(name = "Hotels")
+public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column(unique = true, nullable = false)
+    private Integer rating;
+    private String city;
+    private String street;
+    private String phoneNumber;
     private String email;
-    @Enumerated(EnumType.STRING)
-    private UserType type;
-    private String password;
 }

@@ -3,22 +3,23 @@ package pl.wat.wcy.server.dao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.wat.wcy.server.converter.StringSetConverter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Users")
-public class User {
+@Table(name = "Rooms")
+public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column(unique = true, nullable = false)
-    private String email;
-    @Enumerated(EnumType.STRING)
-    private UserType type;
-    private String password;
+    private String description;
+    private Double price;
+    @Convert(converter = StringSetConverter.class)
+    private Set<String> features;
 }
