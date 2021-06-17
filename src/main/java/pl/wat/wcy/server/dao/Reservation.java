@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Date;
 
 @Data
 @AllArgsConstructor
@@ -19,12 +18,8 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
-    @Column(name = "dateFrom", columnDefinition = "DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateFrom;
-    @Column(name = "dateTo", columnDefinition = "DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateTo;
+    private Long dateFrom;
+    private Long dateTo;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roomId", referencedColumnName = "id")
     private Room room;

@@ -17,6 +17,9 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotelId", referencedColumnName = "id")
+    private Hotel hotel;
     private String name;
     private String description;
     private Double price;

@@ -23,4 +23,5 @@ public class Attachment {
     private Hotel hotel;
     @Lob
     private String file;
+    private String name;
 }
