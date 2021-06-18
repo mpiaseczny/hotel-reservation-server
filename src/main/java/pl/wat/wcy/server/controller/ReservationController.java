@@ -18,21 +18,21 @@ public class ReservationController {
 
     @GetMapping()
     public ResponseEntity<List<ReservationListItem>> getReservations() {
-        return null;
+        return reservationService.getReservations();
     }
 
     @GetMapping("/{reservationId}")
     public ResponseEntity<ReservationDTO> getReservation(@PathVariable Long reservationId) {
-        return null;
+        return reservationService.getReservation(reservationId);
     }
 
     @PostMapping()
     public ResponseEntity<ReservationDTO> addReservation(@RequestBody ReservationRequest reservationRequest) {
-        return null;
+        return reservationService.addReservation(reservationRequest);
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Long reservationId) {
-        return null;
+    public ResponseEntity<Long> deleteReservation(@PathVariable Long reservationId) {
+        return reservationService.deleteReservation(reservationId);
     }
 }

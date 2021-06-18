@@ -73,4 +73,18 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
     }
+
+    public boolean isCurrentUserAdmin() {
+        if (!isLoggedIn()) return false;
+
+        User currentUser;
+        try {
+            currentUser = getCurrentUser();
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return currentUser.getType() == UserType.ADMIN;
+    }
 }

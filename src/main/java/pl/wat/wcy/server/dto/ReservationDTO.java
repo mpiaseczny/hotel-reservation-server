@@ -14,10 +14,11 @@ public class ReservationDTO {
     private Long id;
     private String name;
     private String description;
+    private Integer capacity;
     private Set<String> features;
     private List<File> attachments;
-    private Double dateFrom;
-    private Double dateTo;
+    private Long dateFrom;
+    private Long dateTo;
     private Double totalPrice;
     private List<OpinionDTO> opinions;
     private String hotelName;

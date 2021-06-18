@@ -15,6 +15,7 @@ public class RoomDTO {
     private String name;
     private String description;
     private Double price;
+    private Integer capacity;
     private Set<String> features;
     private List<File> attachments;
     private List<OpinionDTO> opinions;

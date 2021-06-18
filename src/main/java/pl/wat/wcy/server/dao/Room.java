@@ -23,6 +23,7 @@ public class Room {
     private String name;
     private String description;
     private Double price;
+    private Integer capacity;
     @Convert(converter = StringSetConverter.class)
     private Set<String> features;
 }

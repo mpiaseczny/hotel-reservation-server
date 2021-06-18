@@ -3,7 +3,6 @@ package pl.wat.wcy.server.service;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.wat.wcy.server.dao.*;
@@ -11,10 +10,7 @@ import pl.wat.wcy.server.dto.File;
 import pl.wat.wcy.server.dto.HotelDTO;
 import pl.wat.wcy.server.dto.OpinionDTO;
 import pl.wat.wcy.server.dto.OpinionRequest;
-import pl.wat.wcy.server.repository.AttachmentRepository;
-import pl.wat.wcy.server.repository.HotelRepository;
-import pl.wat.wcy.server.repository.OpinionRepository;
-import pl.wat.wcy.server.repository.RoomRepository;
+import pl.wat.wcy.server.repository.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +27,7 @@ public class HotelService {
     private final AttachmentRepository attachmentRepository;
     private final RoomRepository roomRepository;
     private final OpinionRepository opinionRepository;
+    private final ReservationRepository reservationRepository;
 
     public ResponseEntity<List<HotelDTO>> getHotels(String city) {
         List<HotelDTO> hotelsResponseList = new LinkedList<>();
@@ -72,7 +69,7 @@ public class HotelService {
     }
 
     public ResponseEntity<HotelDTO> addHotel(HotelDTO hotelDTO) {
-        if (!isCurrentUserAdmin()) {
+        if (!authService.isCurrentUserAdmin()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -105,7 +102,7 @@ public class HotelService {
     }
 
     public ResponseEntity<HotelDTO> updateHotel(Long hotelId, HotelDTO hotelDTO) {
-        if (!isCurrentUserAdmin()) {
+        if (!authService.isCurrentUserAdmin()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -142,8 +139,8 @@ public class HotelService {
         return new ResponseEntity<>(hotelDTO, HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> deleteHotel(Long hotelId) {
-        if (!isCurrentUserAdmin()) {
+    public ResponseEntity<Long> deleteHotel(Long hotelId) {
+        if (!authService.isCurrentUserAdmin()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -151,11 +148,12 @@ public class HotelService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        hotelRepository.deleteById(hotelId);
+        long removedItemCount = hotelRepository.removeById(hotelId);
         attachmentRepository.deleteByHotel_Id(hotelId);
         roomRepository.deleteByHotel_Id(hotelId);
+        reservationRepository.deleteByRoom_Hotel_Id(hotelId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(removedItemCount, HttpStatus.OK);
     }
 
     public ResponseEntity<OpinionDTO> addOpinion(Long hotelId, OpinionRequest opinionRequest) {
@@ -195,19 +193,5 @@ public class HotelService {
                 hotelDTO.getStreet() == null ||
                 hotelDTO.getPhoneNumber() == null ||
                 hotelDTO.getEmail() == null;
-    }
-
-    private boolean isCurrentUserAdmin() {
-        if (!authService.isLoggedIn()) return false;
-
-        User currentUser;
-        try {
-            currentUser = authService.getCurrentUser();
-        } catch (UsernameNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return currentUser.getType() == UserType.ADMIN;
     }
 }

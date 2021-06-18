@@ -17,7 +17,7 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping()
-    public ResponseEntity<List<HotelDTO>> getHotels(@RequestParam(defaultValue = "") String city) {
+    public ResponseEntity<List<HotelDTO>> getHotels(@RequestParam(defaultValue = "", required = false) String city) {
         return hotelService.getHotels(city);
     }
 
@@ -32,7 +32,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{hotelId}")
-    public ResponseEntity<Void> deleteHotel(@PathVariable Long hotelId) {
+    public ResponseEntity<Long> deleteHotel(@PathVariable Long hotelId) {
         return hotelService.deleteHotel(hotelId);
     }
 
