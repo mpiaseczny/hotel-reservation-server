@@ -26,7 +26,7 @@ public class RoomService {
     private final OpinionRepository opinionRepository;
     private final HotelRepository hotelRepository;
 
-    public ResponseEntity<List<RoomListItem>> getRooms(String nameOrCity, Long dateFrom, Long dateTo, Integer people) {
+    public ResponseEntity<List<RoomListItem>> getRooms(String hotelNameOrCity, Long dateFrom, Long dateTo, Integer people) {
         List<RoomListItem> roomsResponseList = new LinkedList<>();
 
         long roomCount = roomRepository.count();
@@ -34,7 +34,7 @@ public class RoomService {
             return new ResponseEntity<>(roomsResponseList, HttpStatus.OK);
         }
 
-        List<Room> rooms = roomRepository.findDistinctByNameOrHotel_CityAllIgnoreCase(nameOrCity, nameOrCity);
+        List<Room> rooms = roomRepository.findDistinctByHotel_NameOrHotel_CityAllIgnoreCase(hotelNameOrCity, hotelNameOrCity);
         if (dateFrom != null && dateTo != null) {
             rooms = rooms.stream().filter(room -> {
                 List<TimeInterval> timeIntervals = getReservationsTimesForRoom(room.getId());
@@ -56,13 +56,12 @@ public class RoomService {
         for (Room room: rooms) {
             List<Attachment> attachments = attachmentRepository.findByRoom_Id(room.getId());
 
-            List<File> files = new LinkedList<>();
-            for (Attachment attachment: attachments) {
-                File file = new File();
+            File file = null;
+            if (!attachments.isEmpty()) {
+                Attachment attachment = attachments.get(0);
+                file = new File();
                 file.setName(attachment.getName());
                 file.setFile(attachment.getFile());
-
-                files.add(file);
             }
 
             RoomListItem roomListItem = new RoomListItem();
@@ -70,8 +69,9 @@ public class RoomService {
             roomListItem.setName(room.getName());
             roomListItem.setCapacity(room.getCapacity());
             roomListItem.setDescription(room.getDescription());
+            roomListItem.setPrice(room.getPrice());
             roomListItem.setFeatures(room.getFeatures());
-            roomListItem.setAttachments(files);
+            roomListItem.setAttachment(file);
 
             roomsResponseList.add(roomListItem);
         }
@@ -271,9 +271,9 @@ public class RoomService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        long removedItemCount = roomRepository.removeById(roomId);
         attachmentRepository.deleteByRoom_Id(roomId);
         reservationRepository.deleteByRoom_Id(roomId);
+        long removedItemCount = roomRepository.removeById(roomId);
 
         return new ResponseEntity<>(removedItemCount, HttpStatus.OK);
     }

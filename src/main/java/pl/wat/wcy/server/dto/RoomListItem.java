@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -17,5 +16,5 @@ public class RoomListItem {
     private Double price;
     private Integer capacity;
     private Set<String> features;
-    private List<File> attachments;
+    private File attachment;
 }

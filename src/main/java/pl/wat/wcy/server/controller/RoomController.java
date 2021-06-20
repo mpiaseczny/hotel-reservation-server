@@ -20,12 +20,12 @@ public class RoomController {
 
     @GetMapping()
     public ResponseEntity<List<RoomListItem>> getRooms(
-            @RequestParam String nameOrCity,
+            @RequestParam String hotelNameOrCity,
             @RequestParam(required = false) @Nullable Long dateFrom,
             @RequestParam(required = false) @Nullable Long dateTo,
             @RequestParam(required = false) @Nullable Integer people
     ) {
-        return roomService.getRooms(nameOrCity, dateFrom, dateTo, people);
+        return roomService.getRooms(hotelNameOrCity, dateFrom, dateTo, people);
     }
 
     @GetMapping("/{roomId}")

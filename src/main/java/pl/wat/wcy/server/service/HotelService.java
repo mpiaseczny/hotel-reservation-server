@@ -78,12 +78,12 @@ public class HotelService {
         }
 
         Hotel hotel = new Hotel();
-        hotel.setName(hotel.getName());
-        hotel.setRating(hotel.getRating());
-        hotel.setCity(hotel.getCity());
-        hotel.setStreet(hotel.getStreet());
-        hotel.setPhoneNumber(hotel.getPhoneNumber());
-        hotel.setEmail(hotel.getEmail());
+        hotel.setName(hotelDTO.getName());
+        hotel.setRating(hotelDTO.getRating());
+        hotel.setCity(hotelDTO.getCity());
+        hotel.setStreet(hotelDTO.getStreet());
+        hotel.setPhoneNumber(hotelDTO.getPhoneNumber());
+        hotel.setEmail(hotelDTO.getEmail());
 
         Hotel savedHotel = hotelRepository.save(hotel);
         hotelDTO.setId(savedHotel.getId());
@@ -148,10 +148,10 @@ public class HotelService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        long removedItemCount = hotelRepository.removeById(hotelId);
         attachmentRepository.deleteByHotel_Id(hotelId);
-        roomRepository.deleteByHotel_Id(hotelId);
         reservationRepository.deleteByRoom_Hotel_Id(hotelId);
+        roomRepository.deleteByHotel_Id(hotelId);
+        long removedItemCount = hotelRepository.removeById(hotelId);
 
         return new ResponseEntity<>(removedItemCount, HttpStatus.OK);
     }
