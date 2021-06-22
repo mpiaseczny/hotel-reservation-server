@@ -18,6 +18,7 @@ import java.util.Optional;
 @Transactional
 public class ReservationService {
     private final AuthService authService;
+    private final RoomService roomService;
 
     private final ReservationRepository reservationRepository;
     private final AttachmentRepository attachmentRepository;
@@ -48,7 +49,8 @@ public class ReservationService {
             reservationListItem.setId(reservation.getId());
             reservationListItem.setRoomName(reservation.getRoom().getName());
             reservationListItem.setDateFrom(reservation.getDateFrom());
-            reservationListItem.setDateTo(reservationListItem.getDateTo());
+            reservationListItem.setDateTo(reservation.getDateTo());
+            reservationListItem.setPrice(reservation.getPrice());
             reservationListItem.setAttachment(file);
 
             reservationListItems.add(reservationListItem);
@@ -103,6 +105,7 @@ public class ReservationService {
         reservationDTO.setDateTo(reservation.getDateTo());
         reservationDTO.setTotalPrice(reservation.getPrice());
         reservationDTO.setOpinions(opinionDTOS);
+        reservationDTO.setHotelId(hotel.getId());
         reservationDTO.setHotelName(hotel.getName());
         reservationDTO.setRating(hotel.getRating());
         reservationDTO.setCity(hotel.getCity());
@@ -123,14 +126,23 @@ public class ReservationService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        List<TimeInterval> reservationTimes = roomService.getReservationsTimesForRoom(reservationRequest.getRoomId());
+        boolean reservationCollision = reservationTimes.stream().anyMatch(timeInterval ->
+            (reservationRequest.getDateFrom() <= timeInterval.getDateTo() && reservationRequest.getDateTo() >= timeInterval.getDateTo()) ||
+                    (reservationRequest.getDateFrom() <= timeInterval.getDateFrom() && reservationRequest.getDateTo() >= timeInterval.getDateTo())
+        );
+        if (reservationCollision) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Room room = optionalRoom.get();
         Hotel hotel = room.getHotel();
         User currentUser = authService.getCurrentUser();
 
         Reservation reservation = new Reservation();
         reservation.setUser(currentUser);
-        reservation.setDateFrom(reservation.getDateFrom());
-        reservation.setDateTo(reservation.getDateTo());
+        reservation.setDateFrom(reservationRequest.getDateFrom());
+        reservation.setDateTo(reservationRequest.getDateTo());
         reservation.setRoom(room);
         reservation.setPrice(reservationRequest.getPrice());
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -166,6 +178,7 @@ public class ReservationService {
         reservationDTO.setDateTo(savedReservation.getDateTo());
         reservationDTO.setTotalPrice(savedReservation.getPrice());
         reservationDTO.setOpinions(opinionDTOS);
+        reservationDTO.setHotelId(hotel.getId());
         reservationDTO.setHotelName(hotel.getName());
         reservationDTO.setRating(hotel.getRating());
         reservationDTO.setCity(hotel.getCity());

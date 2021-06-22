@@ -19,6 +19,7 @@ public class RoomDTO {
     private Set<String> features;
     private List<File> attachments;
     private List<OpinionDTO> opinions;
+    private Long hotelId;
     private String hotelName;
     private Integer rating;
     private String city;

@@ -21,6 +21,7 @@ public class ReservationDTO {
     private Long dateTo;
     private Double totalPrice;
     private List<OpinionDTO> opinions;
+    private Long hotelId;
     private String hotelName;
     private Integer rating;
     private String city;

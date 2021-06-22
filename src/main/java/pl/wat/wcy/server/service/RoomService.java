@@ -119,6 +119,7 @@ public class RoomService {
         roomDTO.setFeatures(room.getFeatures());
         roomDTO.setAttachments(files);
         roomDTO.setOpinions(opinionDTOS);
+        roomDTO.setHotelId(hotel.getId());
         roomDTO.setHotelName(hotel.getName());
         roomDTO.setRating(hotel.getRating());
         roomDTO.setCity(hotel.getCity());
@@ -189,6 +190,7 @@ public class RoomService {
         roomDTO.setFeatures(savedRoom.getFeatures());
         roomDTO.setAttachments(roomRequest.getAttachments());
         roomDTO.setOpinions(opinionDTOS);
+        roomDTO.setHotelId(hotel.getId());
         roomDTO.setHotelName(hotel.getName());
         roomDTO.setRating(hotel.getRating());
         roomDTO.setCity(hotel.getCity());
@@ -252,6 +254,7 @@ public class RoomService {
         roomDTO.setFeatures(savedRoom.getFeatures());
         roomDTO.setAttachments(roomRequest.getAttachments());
         roomDTO.setOpinions(opinionDTOS);
+        roomDTO.setHotelId(hotel.getId());
         roomDTO.setHotelName(hotel.getName());
         roomDTO.setRating(hotel.getRating());
         roomDTO.setCity(hotel.getCity());
@@ -278,7 +281,7 @@ public class RoomService {
         return new ResponseEntity<>(removedItemCount, HttpStatus.OK);
     }
 
-    private List<TimeInterval> getReservationsTimesForRoom(Long roomId) {
+    public List<TimeInterval> getReservationsTimesForRoom(Long roomId) {
         List<TimeInterval> reservationsTimes = new LinkedList<>();
 
         List<Reservation> reservations = reservationRepository.findByRoom_IdOrderByDateFromAsc(roomId);
